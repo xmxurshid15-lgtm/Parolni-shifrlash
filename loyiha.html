@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Parol Shifrlash - Onlayn vosita</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            max-width: 650px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
+            padding: 2rem 1.8rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 0.25rem;
+            color: #1e2a3a;
+        }
+        .sub {
+            color: #4a627a;
+            border-left: 4px solid #3b82f6;
+            padding-left: 12px;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 1rem;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            transition: 0.2s;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-family: system-ui;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .result-box {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 16px 18px;
+            border: 1px solid #e2e8f0;
+            margin-top: 20px;
+        }
+        .result-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+        .hash-value {
+            font-family: monospace;
+            word-break: break-all;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 8px 0;
+        }
+        .copy-btn {
+            background: #334155;
+            width: auto;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            margin-bottom: 0;
+            border-radius: 40px;
+        }
+        .copy-btn:hover {
+            background: #1e293b;
+        }
+        .note {
+            font-size: 0.75rem;
+            color: #5b6e8c;
+            text-align: center;
+            margin-top: 24px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 18px;
+        }
+        .flex-btns {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .warning {
+            background: #fffbeb;
+            border-left: 4px solid #eab308;
+            padding: 12px;
+            font-size: 0.8rem;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 500px) {
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🔐 Parol shifrlash</h1>
+    <div class="sub">Xavfsiz tarzda parolingizni hash yoki shifrlash</div>
+
+    <div class="warning">
+        ⚠️ Hech qanday ma'lumot serverga yuborilmaydi. Hammasi sizning qurilmangizda bajariladi.
+    </div>
+
+    <label>🔑 Parol (yoki matn)</label>
+    <input type="text" id="passwordInput" placeholder="Mening maxfiy parolim123" autocomplete="off">
+
+    <label>🧪 Shifrlash usuli</label>
+    <select id="methodSelect">
+        <option value="sha256">SHA-256 (bir tomonlama hash, qaytarib bo'lmaydi)</option>
+        <option value="base64">Base64 (oddiy kodlash, o'qish mumkin)</option>
+        <option value="aes">AES-GCM (kalit bilan, qaytarish mumkin)</option>
+    </select>
+
+    <div id="aesKeyContainer" style="display: none;">
+        <label>🔐 AES kaliti (12+ belgi, kuchli kalit)</label>
+        <input type="password" id="aesKeyInput" placeholder="Kalit: hech kimga aytmang">
+    </div>
+
+    <button id="encryptBtn">✨ Shifrla / Hashla ✨</button>
+
+    <div class="result-box" id="resultBox" style="display: none;">
+        <div class="result-label">📌 NATIJA</div>
+        <div class="hash-value" id="resultText"></div>
+        <div class="flex-btns">
+            <button class="copy-btn" id="copyBtn">📋 Nusxalash</button>
+        </div>
+    </div>
+
+    <div class="note">
+        • SHA-256: bir tomonlama, ma'lumotlar bazasida parol saqlash uchun.<br>
+        • Base64: oddiy kodlash, maxfiy emas (faqat ko'rinishni o'zgartiradi).<br>
+        • AES: kalit bilan shifrlaydi, kalitni bilgan odam qayta ochishi mumkin.
+    </div>
+</div>
+
+<script>
+    (function() {
+        const passwordInput = document.getElementById('passwordInput');
+        const methodSelect = document.getElementById('methodSelect');
+        const aesKeyContainer = document.getElementById('aesKeyContainer');
+        const aesKeyInput = document.getElementById('aesKeyInput');
+        const encryptBtn = document.getElementById('encryptBtn');
+        const resultBox = document.getElementById('resultBox');
+        const resultText = document.getElementById('resultText');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // AES-GCM uchun yordamchi funksiyalar (Web Crypto API)
+        async function encryptAES(plainText, keyString) {
+            // keyString dan crypto key yasash
+            const encoder = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(keyString),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+
+            const derivedKey = await crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['encrypt']
+            );
+
+            const encrypted = await crypto.subtle.encrypt(
+                {
+                    name: 'AES-GCM',
+                    iv: iv
+                },
+                derivedKey,
+                encoder.encode(plainText)
+            );
+
+            // natijalarni birlashtirish: salt + iv + encrypted
+            const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+            combined.set(salt, 0);
+            combined.set(iv, salt.length);
+            combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+
+            return btoa(String.fromCharCode.apply(null, combined));
+        }
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        function base64Encode(str) {
+            return btoa(unescape(encodeURIComponent(str)));
+        }
+
+        // Usulni tanlashda AES kalit maydonini ko'rsatish/yashirish
+        methodSelect.addEventListener('change', function() {
+            if (methodSelect.value === 'aes') {
+                aesKeyContainer.style.display = 'block';
+            } else {
+                aesKeyContainer.style.display = 'none';
+            }
+        });
+
+        encryptBtn.addEventListener('click', async function() {
+            const password = passwordInput.value.trim();
+            if (!password) {
+                alert("Iltimos, parol yoki matn kiriting!");
+                return;
+            }
+
+            const method = methodSelect.value;
+            let finalResult = "";
+
+            try {
+                if (method === 'sha256') {
+                    finalResult = await sha256(password);
+                } 
+                else if (method === 'base64') {
+                    finalResult = base64Encode(password);
+                } 
+                else if (method === 'aes') {
+                    const aesKey = aesKeyInput.value;
+                    if (!aesKey || aesKey.length < 6) {
+                        alert("AES shifrlash uchun kamida 6 belgidan iborat kalit kiriting!");
+                        return;
+                    }
+                    finalResult = await encryptAES(password, aesKey);
+                }
+
+                resultText.innerText = finalResult;
+                resultBox.style.display = 'block';
+            } catch (err) {
+                console.error(err);
+                alert("Xatolik yuz berdi: " + err.message);
+            }
+        });
+
+        copyBtn.addEventListener('click', function() {
+            const textToCopy = resultText.innerText;
+            if (!textToCopy) return;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = copyBtn.innerText;
+                copyBtn.innerText = "✅ Nusxalandi!";
+                setTimeout(() => {
+                    copyBtn.innerText = originalText;
+                }, 1500);
+            }).catch(() => {
+                alert("Nusxalash amalga oshmadi, qo'lda belgilab nusxalang.");
+            });
+        });
+
+        // Dastlab AES maydoni yashirin
+        methodSelect.dispatchEvent(new Event('change'));
+    })();
+</script>
+</body>
+</html>
