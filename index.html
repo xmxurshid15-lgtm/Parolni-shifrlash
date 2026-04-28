@@ -1,310 +1,655 @@
+ML
+Copy
+
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Parol Shifrlash - Onlayn vosita</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
+        :root {
+            --bg: #080c10;
+            --surface: #0d1117;
+            --panel: #111820;
+            --border: #1e2d3d;
+            --accent: #00d4ff;
+            --accent2: #7c3aed;
+            --accent3: #10b981;
+            --warn: #f59e0b;
+            --text: #e2eaf4;
+            --text-muted: #6b8299;
+            --mono: 'Space Mono', monospace;
+            --sans: 'Syne', sans-serif;
+            --glow: 0 0 20px rgba(0,212,255,0.25);
+            --glow-sm: 0 0 10px rgba(0,212,255,0.15);
         }
+ 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
         body {
-            font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
-            background: #f0f2f5;
-            margin: 0;
-            padding: 20px;
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            padding: 24px 16px;
+            position: relative;
+            overflow-x: hidden;
         }
-        .card {
-            max-width: 650px;
+ 
+        /* Animated grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridShift 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+ 
+        @keyframes gridShift {
+            0% { transform: translate(0,0); }
+            100% { transform: translate(40px,40px); }
+        }
+ 
+        /* Glowing orbs */
+        body::after {
+            content: '';
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%);
+            top: -100px; right: -100px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+ 
+        .orb2 {
+            position: fixed;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+            bottom: -80px; left: -80px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+ 
+        .wrapper {
+            position: relative;
+            z-index: 1;
             width: 100%;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
-            padding: 2rem 1.8rem;
+            max-width: 600px;
+            animation: fadeUp 0.6s ease both;
         }
-        h1 {
-            font-size: 1.8rem;
-            margin-top: 0;
-            margin-bottom: 0.25rem;
-            color: #1e2a3a;
+ 
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .sub {
-            color: #4a627a;
-            border-left: 4px solid #3b82f6;
-            padding-left: 12px;
-            margin-bottom: 30px;
-            font-size: 0.95rem;
+ 
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
         }
-        label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 6px;
-            color: #0f172a;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 1rem;
-            border-radius: 20px;
-            border: 1px solid #cbd5e1;
-            background: white;
-            transition: 0.2s;
-            margin-bottom: 20px;
-            font-family: monospace;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
-        }
-        button {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            font-weight: bold;
-            font-family: system-ui;
-            cursor: pointer;
+ 
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,212,255,0.08);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 100px;
+            padding: 4px 14px;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
             margin-bottom: 16px;
         }
-        button:hover {
-            background: #2563eb;
+ 
+        .badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            animation: blink 2s ease-in-out infinite;
         }
-        .result-box {
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 16px 18px;
-            border: 1px solid #e2e8f0;
-            margin-top: 20px;
+ 
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
-        .result-label {
+ 
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent) 60%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+ 
+        .sub {
+            font-family: var(--mono);
             font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+ 
+        /* Card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.6;
+        }
+ 
+        /* Warning */
+        .warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 24px;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--warn);
+            line-height: 1.5;
+        }
+ 
+        .warning-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+ 
+        /* Labels */
+        label {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #475569;
+            letter-spacing: 2px;
+            color: var(--text-muted);
             margin-bottom: 8px;
         }
-        .hash-value {
-            font-family: monospace;
-            word-break: break-all;
-            background: #0f172a;
-            color: #e2e8f0;
-            padding: 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin: 8px 0;
-        }
-        .copy-btn {
-            background: #334155;
-            width: auto;
-            padding: 8px 18px;
-            font-size: 0.8rem;
-            margin-bottom: 0;
-            border-radius: 40px;
-        }
-        .copy-btn:hover {
-            background: #1e293b;
-        }
-        .note {
-            font-size: 0.75rem;
-            color: #5b6e8c;
-            text-align: center;
-            margin-top: 24px;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 18px;
-        }
-        .flex-btns {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .warning {
-            background: #fffbeb;
-            border-left: 4px solid #eab308;
-            padding: 12px;
-            font-size: 0.8rem;
-            border-radius: 16px;
+ 
+        /* Inputs */
+        .input-wrap {
+            position: relative;
             margin-bottom: 20px;
         }
-        @media (max-width: 500px) {
-            .card {
-                padding: 1.5rem;
-            }
+ 
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-family: var(--mono);
+            font-size: 0.9rem;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+ 
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: var(--glow-sm);
+        }
+ 
+        input::placeholder { color: #2e4255; }
+ 
+        /* Method selector */
+        .method-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+ 
+        .method-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .method-btn:hover {
+            border-color: rgba(0,212,255,0.3);
+        }
+ 
+        .method-btn.active {
+            border-color: var(--accent);
+            background: rgba(0,212,255,0.06);
+            box-shadow: var(--glow-sm);
+        }
+ 
+        .method-icon {
+            font-size: 1.4rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+ 
+        .method-name {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text);
+            display: block;
+            margin-bottom: 2px;
+        }
+ 
+        .method-desc {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            display: block;
+            line-height: 1.3;
+        }
+ 
+        .method-btn.active .method-name { color: var(--accent); }
+ 
+        /* AES key field */
+        #aesKeyWrap {
+            display: none;
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease both;
+        }
+ 
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+ 
+        /* Encrypt button */
+        .encrypt-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-family: var(--sans);
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .encrypt-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 30px rgba(0,212,255,0.3);
+        }
+ 
+        .encrypt-btn:active { transform: scale(0.99); }
+ 
+        .encrypt-btn.loading { opacity: 0.7; cursor: wait; }
+ 
+        /* Result */
+        .result-box {
+            display: none;
+            margin-top: 20px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            animation: fadeUp 0.4s ease both;
+        }
+ 
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0,212,255,0.03);
+        }
+ 
+        .result-tag {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+ 
+        .result-method-tag {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.2);
+            color: var(--accent3);
+            padding: 2px 10px;
+            border-radius: 100px;
+        }
+ 
+        .result-value {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: #a8c8e8;
+            padding: 16px;
+            word-break: break-all;
+            line-height: 1.7;
+        }
+ 
+        .result-footer {
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+ 
+        .char-count {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+ 
+        .copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,212,255,0.08);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+ 
+        .copy-btn:hover {
+            background: rgba(0,212,255,0.15);
+        }
+ 
+        .copy-btn.copied {
+            border-color: rgba(16,185,129,0.4);
+            color: var(--accent3);
+            background: rgba(16,185,129,0.08);
+        }
+ 
+        /* Legend */
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+ 
+        .legend-item {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+        }
+ 
+        .legend-title {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+ 
+        .legend-text {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+ 
+        .dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .dot-blue { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+        .dot-purple { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+        .dot-green { background: var(--accent3); box-shadow: 0 0 6px var(--accent3); }
+ 
+        @media (max-width: 480px) {
+            .method-grid { grid-template-columns: 1fr; }
+            .legend { grid-template-columns: 1fr; }
+            .card { padding: 20px; }
         }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>🔐 Parol shifrlash</h1>
-    <div class="sub">Xavfsiz tarzda parolingizni hash yoki shifrlash</div>
-
-    <div class="warning">
-        ⚠️ Hech qanday ma'lumot serverga yuborilmaydi. Hammasi sizning qurilmangizda bajariladi.
+<div class="orb2"></div>
+ 
+<div class="wrapper">
+    <div class="header">
+        <div class="badge">Onlayn vosita</div>
+        <h1>Parol Shifrlash</h1>
+        <div class="sub">// Mahalliy shifrlash — hech narsa serverga yuborilmaydi</div>
     </div>
-
-    <label>🔑 Parol (yoki matn)</label>
-    <input type="text" id="passwordInput" placeholder="Mening maxfiy parolim123" autocomplete="off">
-
-    <label>🧪 Shifrlash usuli</label>
-    <select id="methodSelect">
-        <option value="sha256">SHA-256 (bir tomonlama hash, qaytarib bo'lmaydi)</option>
-        <option value="base64">Base64 (oddiy kodlash, o'qish mumkin)</option>
-        <option value="aes">AES-GCM (kalit bilan, qaytarish mumkin)</option>
-    </select>
-
-    <div id="aesKeyContainer" style="display: none;">
-        <label>🔐 AES kaliti (12+ belgi, kuchli kalit)</label>
-        <input type="password" id="aesKeyInput" placeholder="Kalit: hech kimga aytmang">
-    </div>
-
-    <button id="encryptBtn">✨ Shifrla / Hashla ✨</button>
-
-    <div class="result-box" id="resultBox" style="display: none;">
-        <div class="result-label">📌 NATIJA</div>
-        <div class="hash-value" id="resultText"></div>
-        <div class="flex-btns">
-            <button class="copy-btn" id="copyBtn">📋 Nusxalash</button>
+ 
+    <div class="card">
+        <div class="warning">
+            <span class="warning-icon">⚡</span>
+            <span>Barcha amallar faqat sizning brauzeringizda bajariladi. Hech qanday ma'lumot tashqariga chiqmaydi.</span>
+        </div>
+ 
+        <label>Parol yoki matn</label>
+        <div class="input-wrap">
+            <input type="text" id="passwordInput" placeholder="Mening_maxfiy_parolim123" autocomplete="off" spellcheck="false">
+        </div>
+ 
+        <label>Shifrlash usulini tanlang</label>
+        <div class="method-grid">
+            <div class="method-btn active" data-method="sha256">
+                <span class="method-icon">🔒</span>
+                <span class="method-name">SHA-256</span>
+                <span class="method-desc">Bir tomonlama hash</span>
+            </div>
+            <div class="method-btn" data-method="base64">
+                <span class="method-icon">📦</span>
+                <span class="method-name">Base64</span>
+                <span class="method-desc">Oddiy kodlash</span>
+            </div>
+            <div class="method-btn" data-method="aes">
+                <span class="method-icon">🛡️</span>
+                <span class="method-name">AES-GCM</span>
+                <span class="method-desc">Kalit bilan</span>
+            </div>
+        </div>
+ 
+        <div id="aesKeyWrap">
+            <label>AES shifrlash kaliti (min. 6 belgi)</label>
+            <div class="input-wrap">
+                <input type="password" id="aesKeyInput" placeholder="Maxfiy kalit — hech kimga aytmang">
+            </div>
+        </div>
+ 
+        <button class="encrypt-btn" id="encryptBtn">SHIFRLA</button>
+ 
+        <div class="result-box" id="resultBox">
+            <div class="result-header">
+                <span class="result-tag">▶ NATIJA</span>
+                <span class="result-method-tag" id="resultMethodTag">SHA-256</span>
+            </div>
+            <div class="result-value" id="resultText"></div>
+            <div class="result-footer">
+                <span class="char-count" id="charCount">0 belgi</span>
+                <button class="copy-btn" id="copyBtn">📋 Nusxalash</button>
+            </div>
         </div>
     </div>
-
-    <div class="note">
-        • SHA-256: bir tomonlama, ma'lumotlar bazasida parol saqlash uchun.<br>
-        • Base64: oddiy kodlash, maxfiy emas (faqat ko'rinishni o'zgartiradi).<br>
-        • AES: kalit bilan shifrlaydi, kalitni bilgan odam qayta ochishi mumkin.
+ 
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-title"><span class="dot dot-blue"></span>SHA-256</div>
+            <div class="legend-text">Qaytarib bo'lmaydi. Parol saqlash uchun ideal.</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-title"><span class="dot dot-purple"></span>Base64</div>
+            <div class="legend-text">Maxfiy emas, faqat ko'rinishni o'zgartiradi.</div>
+        </div>
+        <div class="legend-item">
+            <div class="legend-title"><span class="dot dot-green"></span>AES-GCM</div>
+            <div class="legend-text">Kalit bilan shifrlaydi. Qaytarish mumkin.</div>
+        </div>
     </div>
 </div>
-
+ 
 <script>
-    (function() {
-        const passwordInput = document.getElementById('passwordInput');
-        const methodSelect = document.getElementById('methodSelect');
-        const aesKeyContainer = document.getElementById('aesKeyContainer');
-        const aesKeyInput = document.getElementById('aesKeyInput');
-        const encryptBtn = document.getElementById('encryptBtn');
-        const resultBox = document.getElementById('resultBox');
-        const resultText = document.getElementById('resultText');
-        const copyBtn = document.getElementById('copyBtn');
-
-        // AES-GCM uchun yordamchi funksiyalar (Web Crypto API)
-        async function encryptAES(plainText, keyString) {
-            // keyString dan crypto key yasash
-            const encoder = new TextEncoder();
-            const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                encoder.encode(keyString),
-                { name: 'PBKDF2' },
-                false,
-                ['deriveBits', 'deriveKey']
-            );
-            const salt = crypto.getRandomValues(new Uint8Array(16));
-            const iv = crypto.getRandomValues(new Uint8Array(12));
-
-            const derivedKey = await crypto.subtle.deriveKey(
-                {
-                    name: 'PBKDF2',
-                    salt: salt,
-                    iterations: 100000,
-                    hash: 'SHA-256'
-                },
-                keyMaterial,
-                { name: 'AES-GCM', length: 256 },
-                false,
-                ['encrypt']
-            );
-
-            const encrypted = await crypto.subtle.encrypt(
-                {
-                    name: 'AES-GCM',
-                    iv: iv
-                },
-                derivedKey,
-                encoder.encode(plainText)
-            );
-
-            // natijalarni birlashtirish: salt + iv + encrypted
-            const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
-            combined.set(salt, 0);
-            combined.set(iv, salt.length);
-            combined.set(new Uint8Array(encrypted), salt.length + iv.length);
-
-            return btoa(String.fromCharCode.apply(null, combined));
-        }
-
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
-        }
-
-        function base64Encode(str) {
-            return btoa(unescape(encodeURIComponent(str)));
-        }
-
-        // Usulni tanlashda AES kalit maydonini ko'rsatish/yashirish
-        methodSelect.addEventListener('change', function() {
-            if (methodSelect.value === 'aes') {
-                aesKeyContainer.style.display = 'block';
-            } else {
-                aesKeyContainer.style.display = 'none';
-            }
+(function() {
+    const passwordInput = document.getElementById('passwordInput');
+    const aesKeyInput = document.getElementById('aesKeyInput');
+    const aesKeyWrap = document.getElementById('aesKeyWrap');
+    const encryptBtn = document.getElementById('encryptBtn');
+    const resultBox = document.getElementById('resultBox');
+    const resultText = document.getElementById('resultText');
+    const resultMethodTag = document.getElementById('resultMethodTag');
+    const charCount = document.getElementById('charCount');
+    const copyBtn = document.getElementById('copyBtn');
+    const methodBtns = document.querySelectorAll('.method-btn');
+ 
+    let currentMethod = 'sha256';
+ 
+    // Method selection
+    methodBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            methodBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMethod = btn.dataset.method;
+            aesKeyWrap.style.display = currentMethod === 'aes' ? 'block' : 'none';
+            resultBox.style.display = 'none';
         });
-
-        encryptBtn.addEventListener('click', async function() {
-            const password = passwordInput.value.trim();
-            if (!password) {
-                alert("Iltimos, parol yoki matn kiriting!");
-                return;
-            }
-
-            const method = methodSelect.value;
-            let finalResult = "";
-
-            try {
-                if (method === 'sha256') {
-                    finalResult = await sha256(password);
-                } 
-                else if (method === 'base64') {
-                    finalResult = base64Encode(password);
-                } 
-                else if (method === 'aes') {
-                    const aesKey = aesKeyInput.value;
-                    if (!aesKey || aesKey.length < 6) {
-                        alert("AES shifrlash uchun kamida 6 belgidan iborat kalit kiriting!");
-                        return;
-                    }
-                    finalResult = await encryptAES(password, aesKey);
-                }
-
-                resultText.innerText = finalResult;
-                resultBox.style.display = 'block';
-            } catch (err) {
-                console.error(err);
-                alert("Xatolik yuz berdi: " + err.message);
-            }
-        });
-
-        copyBtn.addEventListener('click', function() {
-            const textToCopy = resultText.innerText;
-            if (!textToCopy) return;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = copyBtn.innerText;
-                copyBtn.innerText = "✅ Nusxalandi!";
-                setTimeout(() => {
-                    copyBtn.innerText = originalText;
-                }, 1500);
-            }).catch(() => {
-                alert("Nusxalash amalga oshmadi, qo'lda belgilab nusxalang.");
-            });
-        });
-
-        // Dastlab AES maydoni yashirin
-        methodSelect.dispatchEvent(new Event('change'));
-    })();
+    });
+ 
+    // SHA-256
+    async function sha256(message) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(message));
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+ 
+    // Base64
+    function base64Encode(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+    }
+ 
+    // AES-GCM
+    async function encryptAES(plainText, keyString) {
+        const enc = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(keyString), { name: 'PBKDF2' }, false, ['deriveKey']);
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const key = await crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false, ['encrypt']
+        );
+        const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(plainText));
+        const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+        combined.set(salt, 0);
+        combined.set(iv, salt.length);
+        combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+        return btoa(String.fromCharCode(...combined));
+    }
+ 
+    // Encrypt
+    encryptBtn.addEventListener('click', async () => {
+        const password = passwordInput.value.trim();
+        if (!password) {
+            passwordInput.focus();
+            passwordInput.style.borderColor = '#ef4444';
+            setTimeout(() => passwordInput.style.borderColor = '', 800);
+            return;
+        }
+ 
+        if (currentMethod === 'aes' && aesKeyInput.value.length < 6) {
+            aesKeyInput.focus();
+            aesKeyInput.style.borderColor = '#ef4444';
+            setTimeout(() => aesKeyInput.style.borderColor = '', 800);
+            return;
+        }
+ 
+        encryptBtn.classList.add('loading');
+        encryptBtn.textContent = 'ISHLANMOQDA...';
+ 
+        try {
+            let result = '';
+            if (currentMethod === 'sha256') result = await sha256(password);
+            else if (currentMethod === 'base64') result = base64Encode(password);
+            else if (currentMethod === 'aes') result = await encryptAES(password, aesKeyInput.value);
+ 
+            resultText.textContent = result;
+            charCount.textContent = result.length + ' belgi';
+            resultMethodTag.textContent = currentMethod.toUpperCase();
+            resultBox.style.display = 'block';
+        } catch(err) {
+            alert('Xatolik: ' + err.message);
+        } finally {
+            encryptBtn.classList.remove('loading');
+            encryptBtn.textContent = 'SHIFRLA';
+        }
+    });
+ 
+    // Copy
+    copyBtn.addEventListener('click', () => {
+        const text = resultText.textContent;
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+            copyBtn.textContent = '✅ Nusxalandi!';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+                copyBtn.textContent = '📋 Nusxalash';
+                copyBtn.classList.remove('copied');
+            }, 2000);
+        }).catch(() => alert("Qo'lda belgilab nusxalang."));
+    });
+ 
+    // Enter key
+    passwordInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') encryptBtn.click();
+    });
+})();
 </script>
 </body>
 </html>
+ 
