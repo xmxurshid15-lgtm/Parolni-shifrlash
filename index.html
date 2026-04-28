@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KriptoPro - Professional Shifrlash</title>
+    <title>LockForge - Kripto Tarix va Deshifrlash</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
             --bg: #05070a;
@@ -13,240 +14,220 @@
             --border: #1e2d3d;
             --accent: #00d4ff;
             --accent2: #7c3aed;
+            --accent3: #10b981;
             --text: #e2eaf4;
             --text-muted: #8b9eb3;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
 
-        body {
-            font-family: 'Syne', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* Fon animatsiyasi */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.05), transparent);
-            z-index: -1;
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            width: 100%;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transition: 0.3s;
-        }
-
-        /* Login va Register formalari uchun kichikroq o'lcham */
-        .auth-card { max-width: 400px; text-align: center; }
-
-        /* Asosiy oyna uchun keng dizayn */
-        .main-card { max-width: 900px; display: none; animation: fadeIn 0.6s ease; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 40px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .main-card { max-width: 1200px; display: none; animation: fadeIn 0.6s ease; }
+        .auth-card { max-width: 450px; text-align: center; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         h2 { font-size: 2rem; margin-bottom: 25px; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .method-tabs { display: flex; gap: 10px; margin-bottom: 30px; background: var(--panel); padding: 6px; border-radius: 18px; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 14px; font-size: 0.85rem; color: var(--text-muted); transition: 0.3s; }
+        .tab.active { background: var(--accent); color: #000; font-weight: bold; }
+
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        @media (max-width: 1000px) { .grid-layout { grid-template-columns: 1fr; } }
+
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
 
         input, textarea {
             width: 100%; background: var(--panel); border: 1px solid var(--border);
-            border-radius: 14px; padding: 15px; font-family: 'Space Mono', monospace;
-            color: var(--text); outline: none; transition: 0.2s;
+            border-radius: 14px; padding: 12px; font-family: 'Space Mono', monospace;
+            color: var(--text); outline: none; transition: 0.2s; font-size: 0.85rem;
         }
         textarea { height: 120px; resize: none; }
-        input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,212,255,0.1); }
 
-        /* Metodlar uchun tugmalar */
-        .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 25px 0; }
-        .method-btn {
-            background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
-            padding: 20px 10px; cursor: pointer; text-align: center; transition: 0.3s;
+        .btn {
+            width: 100%; border: none; border-radius: 14px; padding: 14px; font-weight: 700;
+            color: white; cursor: pointer; font-size: 0.9rem; transition: 0.3s; margin-bottom: 10px;
         }
-        .method-btn:hover { border-color: var(--accent2); }
-        .method-btn.active { border-color: var(--accent); background: rgba(0, 212, 255, 0.05); }
-        .method-btn b { display: block; font-size: 0.9rem; margin-bottom: 5px; }
-        .method-btn span { font-size: 0.65rem; color: var(--text-muted); }
-
-        .action-btn {
-            width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border: none; border-radius: 14px; padding: 18px; font-weight: 700;
-            color: white; cursor: pointer; font-size: 1rem; transition: 0.3s;
+        .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+        .btn-decrypt { background: var(--accent3); color: #000; }
+        
+        /* Tarix oynasi stili */
+        .history-panel {
+            background: #000; border: 1px solid var(--border); border-radius: 14px;
+            padding: 15px; height: 450px; overflow-y: auto;
         }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3); }
-
-        .result-box {
-            margin-top: 30px; background: #000; border: 1px dashed var(--accent);
-            border-radius: 14px; padding: 20px; display: none; position: relative;
+        .history-item {
+            background: var(--panel); padding: 10px; border-radius: 8px; margin-bottom: 10px;
+            font-size: 0.75rem; border-left: 3px solid var(--accent2);
         }
-        .result-text { font-family: 'Space Mono', monospace; font-size: 0.9rem; color: var(--accent); word-break: break-all; }
+        .history-item span { color: var(--accent); display: block; margin-top: 5px; word-break: break-all; }
 
-        .auth-toggle { margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; }
-        .auth-toggle span { color: var(--accent); font-weight: bold; }
-
-        .error { color: #ff4b4b; font-size: 0.8rem; margin-top: 10px; display: none; }
+        .result-screen { background: #000; border: 1px solid var(--accent); border-radius: 14px; padding: 15px; min-height: 150px; color: var(--accent); font-family: 'Space Mono', monospace; word-break: break-all; font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
-    <div id="loginForm" class="card auth-card">
-        <h2>Kirish</h2>
-        <div class="input-group">
-            <label>Login</label>
-            <input type="text" id="userLogin" placeholder="Admin">
+    <div id="authContainer" class="card auth-card">
+        <div id="loginView">
+            <h2>Kirish</h2>
+            <input type="text" id="lUser" placeholder="Login" class="input-group">
+            <input type="password" id="lPass" placeholder="Parol" class="input-group" style="width:100%; margin-bottom:20px;">
+            <button class="btn btn-primary" onclick="handleLogin()">KIRISH</button>
+            <p onclick="toggleAuth('reg')" style="cursor:pointer; font-size:0.8rem; margin-top:10px;">Ro'yxatdan o'tish</p>
         </div>
-        <div class="input-group">
-            <label>Parol</label>
-            <input type="password" id="userPass" placeholder="••••••••">
+        <div id="registerView" style="display: none;">
+            <h2>Ro'yxatdan o'tish</h2>
+            <input type="text" id="rUser" placeholder="Yangi Login" class="input-group">
+            <input type="password" id="rPass" placeholder="Yangi Parol" class="input-group" style="width:100%; margin-bottom:20px;">
+            <button class="btn btn-primary" onclick="handleRegister()">SAQLASH</button>
+            <p onclick="toggleAuth('login')" style="cursor:pointer; font-size:0.8rem; margin-top:10px;">Kirishga qaytish</p>
         </div>
-        <button class="action-btn" onclick="handleLogin()">TIZIMGA KIRISH</button>
-        <p id="loginErr" class="error">Login yoki parol noto'g'ri!</p>
-        <p class="auth-toggle" onclick="toggleForm('reg')">Hisobingiz yo'qmi? <span>Ro'yxatdan o'tish</span></p>
-    </div>
-
-    <div id="regForm" class="card auth-card" style="display: none;">
-        <h2>Ro'yxatdan o'tish</h2>
-        <div class="input-group">
-            <label>Yangi Login</label>
-            <input type="text" id="regUser" placeholder="Kamida 3 belgi">
-        </div>
-        <div class="input-group">
-            <label>Yangi Parol</label>
-            <input type="password" id="regPass" placeholder="Kamida 6 belgi">
-        </div>
-        <button class="action-btn" onclick="handleRegister()">RO'YXATDAN O'TISH</button>
-        <p class="auth-toggle" onclick="toggleForm('login')">Akkauntingiz bormi? <span>Kirish</span></p>
     </div>
 
     <div id="mainDashboard" class="card main-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h2 style="margin: 0;">Kripto Dashboard</h2>
-            <button onclick="location.reload()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:8px 15px; border-radius:10px; cursor:pointer;">Chiqish</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="margin:0;">Parolingizni xafsizroq qiling</h2>
+            <button class="btn" style="width:auto; padding:8px 20px; background:var(--panel);" onclick="location.reload()">Chiqish</button>
         </div>
 
-        <div class="input-group">
-            <label>Shifrlanuvchi ma'lumot (Matn)</label>
-            <textarea id="dataInput" placeholder="Maxfiy xabaringizni bu yerga yozing..."></textarea>
+        <div class="method-tabs">
+            <div class="tab active" id="tab-sim" onclick="switchMode('sim')">Simmetrik (AES)</div>
+            <div class="tab" id="tab-hash" onclick="switchMode('hash')">Xeshflash (SHA-256)</div>
         </div>
 
-        <label>Shifrlash turini tanlang</label>
-        <div class="method-grid">
-            <div class="method-btn active" onclick="setMethod('sim', this)">
-                <b>Simmetrik</b>
-                <span>AES-256 GCM</span>
+        <div class="grid-layout">
+            <div>
+                <label>Matnni kiriting</label>
+                <textarea id="mainInput" placeholder="Shifrlash yoki deshifrlash uchun matn..."></textarea>
+                
+                <div id="keySection" class="input-group" style="margin-top:15px;">
+                    <label>Maxfiy Kalit</label>
+                    <input type="text" id="mainKey" placeholder="Kalitni kiriting">
+                </div>
+
+                <button class="btn btn-primary" onclick="processCrypto('encrypt')">SHIFRLASH</button>
+                <button id="decryptBtn" class="btn btn-decrypt" onclick="processCrypto('decrypt')">DESHIFRLASH</button>
             </div>
-            <div class="method-btn" onclick="setMethod('asim', this)">
-                <b>Assimmetrik</b>
-                <span>RSA / ECC</span>
+
+            <div>
+                <label>Natija</label>
+                <div id="output" class="result-screen">Kutilmoqda...</div>
+                <button class="btn" style="background:var(--panel); margin-top:10px;" onclick="copyOut()">NUSXALASH</button>
             </div>
-            <div class="method-btn" onclick="setMethod('hash', this)">
-                <b>Xeshflash</b>
-                <span>SHA-256</span>
+
+            <div>
+                <label>Shifrlar Tarixi</label>
+                <div id="historyList" class="history-panel">
+                    <p style="font-size:0.7rem; color:var(--text-muted); text-align:center;">Tarix bo'sh</p>
+                </div>
+                <button class="btn" style="background:rgba(244,63,94,0.1); color:#f43f5e; margin-top:10px; font-size:0.7rem;" onclick="clearHistory()">TARIXNI TOZALASH</button>
             </div>
-        </div>
-
-        <div id="keySection" class="input-group">
-            <label id="keyLabel">Xavfsizlik kaliti (Symmetric Key)</label>
-            <input type="password" id="secretKey" placeholder="Maxfiy kalitni kiriting">
-        </div>
-
-        <button class="action-btn" onclick="processData()">AMALNI BAJARISH</button>
-
-        <div id="resultArea" class="result-box">
-            <label style="color: var(--accent2)">Natija (Base64 / Hex)</label>
-            <div id="resultValue" class="result-text"></div>
-            <button onclick="copyResult()" style="margin-top:15px; background:rgba(0,212,255,0.1); border:1px solid var(--accent); color:var(--accent); padding:5px 12px; border-radius:8px; cursor:pointer; font-size:0.7rem;">Nusxalash</button>
         </div>
     </div>
 
 <script>
-    let currentMode = 'sim';
+    let mode = 'sim';
+    let currentUser = "";
 
-    function toggleForm(type) {
-        document.getElementById('loginForm').style.display = type === 'login' ? 'block' : 'none';
-        document.getElementById('regForm').style.display = type === 'reg' ? 'block' : 'none';
+    // AUTH
+    function toggleAuth(v) {
+        document.getElementById('loginView').style.display = v === 'login' ? 'block' : 'none';
+        document.getElementById('registerView').style.display = v === 'reg' ? 'block' : 'none';
     }
 
     function handleRegister() {
-        const u = document.getElementById('regUser').value;
-        const p = document.getElementById('regPass').value;
-        if(u.length < 3 || p.length < 6) { alert("Ma'lumotlar yetarli emas!"); return; }
-        
-        let users = JSON.parse(localStorage.getItem('kripto_users') || '{}');
-        if(users[u]) { alert("Bu login band!"); return; }
-        
+        const u = document.getElementById('rUser').value.trim();
+        const p = document.getElementById('rPass').value.trim();
+        if(u.length < 3 || p.length < 5) return alert("Kam!");
+        let users = JSON.parse(localStorage.getItem('users') || '{}');
         users[u] = p;
-        localStorage.setItem('kripto_users', JSON.stringify(users));
-        alert("Muvaffaqiyatli ro'yxatdan o'tdingiz!");
-        toggleForm('login');
+        localStorage.setItem('users', JSON.stringify(users));
+        alert("Saqlandi!"); toggleAuth('login');
     }
 
     function handleLogin() {
-        const u = document.getElementById('userLogin').value;
-        const p = document.getElementById('userPass').value;
-        const users = JSON.parse(localStorage.getItem('kripto_users') || '{"admin":"123456"}');
-
+        const u = document.getElementById('lUser').value;
+        const p = document.getElementById('lPass').value;
+        const users = JSON.parse(localStorage.getItem('users') || '{"admin":"123456"}');
         if(users[u] === p) {
-            document.getElementById('loginForm').style.display = 'none';
+            currentUser = u;
+            document.getElementById('authContainer').style.display = 'none';
             document.getElementById('mainDashboard').style.display = 'block';
-        } else {
-            document.getElementById('loginErr').style.display = 'block';
-        }
+            loadHistory();
+        } else alert("Xato!");
     }
 
-    function setMethod(m, el) {
-        currentMode = m;
-        document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        
-        const keySection = document.getElementById('keySection');
-        if(m === 'hash') {
-            keySection.style.display = 'none';
-        } else {
-            keySection.style.display = 'block';
-            document.getElementById('keyLabel').textContent = m === 'sim' ? 'Simmetrik kalit (Parol)' : 'Assimmetrik ochiq kalit (Public Key)';
-        }
+    // KRIPTO
+    function switchMode(m) {
+        mode = m;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-'+m).classList.add('active');
+        document.getElementById('keySection').style.display = m === 'sim' ? 'block' : 'none';
+        document.getElementById('decryptBtn').style.display = m === 'sim' ? 'block' : 'none';
     }
 
-    async function processData() {
-        const input = document.getElementById('dataInput').value;
-        if(!input) return;
-
+    function processCrypto(action) {
+        const input = document.getElementById('mainInput').value.trim();
+        const key = document.getElementById('mainKey').value.trim();
         let result = "";
 
-        if(currentMode === 'hash') {
-            // SHA-256 Hashing
-            const msgBuffer = new TextEncoder().encode(input);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            result = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        } else if(currentMode === 'sim') {
-            // Simple Base64 Simulation for Symmetric (kodni murakkablashtirmaslik uchun)
-            result = btoa(unescape(encodeURIComponent(input)));
-        } else {
-            // Asymmetric Simulation
-            result = "RSA_ENC_" + btoa(input).substring(0, 32);
-        }
+        if(!input) return;
 
-        document.getElementById('resultValue').textContent = result;
-        document.getElementById('resultArea').style.display = 'block';
+        try {
+            if(mode === 'sim') {
+                if(!key) return alert("Kalitni kiriting!");
+                if(action === 'encrypt') {
+                    result = CryptoJS.AES.encrypt(input, key).toString();
+                    addToHistory("Shifrlash", result);
+                } else {
+                    const bytes = CryptoJS.AES.decrypt(input, key);
+                    result = bytes.toString(CryptoJS.enc.Utf8);
+                    if(!result) throw new Error();
+                }
+            } else {
+                result = CryptoJS.SHA256(input).toString();
+                addToHistory("Xesh (SHA)", result);
+            }
+            document.getElementById('output').textContent = result;
+        } catch(e) {
+            document.getElementById('output').textContent = "XATO: Noto'g'ri shifr yoki kalit!";
+        }
     }
 
-    function copyResult() {
-        const text = document.getElementById('resultValue').textContent;
-        navigator.clipboard.writeText(text);
+    // TARIX FUNKSIYALARI
+    function addToHistory(type, val) {
+        let history = JSON.parse(localStorage.getItem('crypto_history_' + currentUser) || '[]');
+        history.unshift({ type, val, time: new Date().toLocaleTimeString() });
+        if(history.length > 20) history.pop(); // Faqat oxirgi 20 tasi
+        localStorage.setItem('crypto_history_' + currentUser, JSON.stringify(history));
+        loadHistory();
+    }
+
+    function loadHistory() {
+        const list = document.getElementById('historyList');
+        let history = JSON.parse(localStorage.getItem('crypto_history_' + currentUser) || '[]');
+        if(history.length === 0) {
+            list.innerHTML = '<p style="font-size:0.7rem; color:var(--text-muted); text-align:center;">Tarix bo\'sh</p>';
+            return;
+        }
+        list.innerHTML = history.map(item => `
+            <div class="history-item">
+                <small>${item.time} - ${item.type}</small>
+                <span>${item.val}</span>
+            </div>
+        `).join('');
+    }
+
+    function clearHistory() {
+        localStorage.removeItem('crypto_history_' + currentUser);
+        loadHistory();
+    }
+
+    function copyOut() {
+        navigator.clipboard.writeText(document.getElementById('output').textContent);
         alert("Nusxalandi!");
     }
 </script>
