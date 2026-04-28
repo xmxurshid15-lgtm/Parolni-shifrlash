@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Parol Shifrlash - Maxfiy Kirish</title>
+    <title>Parol Shifrlash - Xavfsiz Tizim</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -20,8 +20,6 @@
             --text-muted: #6b8299;
             --mono: 'Space Mono', monospace;
             --sans: 'Syne', sans-serif;
-            --glow: 0 0 20px rgba(0,212,255,0.25);
-            --glow-sm: 0 0 10px rgba(0,212,255,0.15);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,62 +33,12 @@
             justify-content: center;
             align-items: center;
             padding: 24px 16px;
-            position: relative;
             overflow-x: hidden;
         }
 
-        /* Background Anim */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridShift 20s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes gridShift {
-            0% { transform: translate(0,0); }
-            100% { transform: translate(40px,40px); }
-        }
-
-        .orb2 {
-            position: fixed;
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
-            bottom: -80px; left: -80px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Login Overlay */
-        #loginOverlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
-
-        /* Main Content Wrapper */
-        .wrapper {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 600px;
-            display: none; /* Initially hidden */
-        }
-
+        /* Animatsiyalar */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -100,12 +48,18 @@
             75% { transform: translateX(8px); }
         }
 
-        .header { text-align: center; margin-bottom: 32px; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
 
         .badge {
             display: inline-flex;
-            align-items: center;
-            gap: 6px;
             background: rgba(0,212,255,0.08);
             border: 1px solid rgba(0,212,255,0.2);
             border-radius: 100px;
@@ -113,273 +67,201 @@
             font-family: var(--mono);
             font-size: 0.7rem;
             color: var(--accent);
-            letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 16px;
         }
 
-        h1 {
-            font-size: clamp(1.8rem, 5vw, 2.6rem);
-            font-weight: 800;
-            line-height: 1.1;
-            background: linear-gradient(135deg, #ffffff 0%, var(--accent) 60%, var(--accent2) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+        h2 { margin-bottom: 20px; font-weight: 800; }
 
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .warning {
-            display: flex; align-items: flex-start; gap: 10px;
-            background: rgba(245,158,11,0.06);
-            border: 1px solid rgba(245,158,11,0.2);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 24px;
-            font-family: var(--mono);
-            font-size: 0.72rem;
-            color: var(--warn);
-        }
+        .input-wrap { margin-bottom: 15px; text-align: left; }
 
         label {
-            display: block; font-family: var(--mono); font-size: 0.7rem;
-            text-transform: uppercase; letter-spacing: 2px;
-            color: var(--text-muted); margin-bottom: 8px;
+            display: block; font-family: var(--mono); font-size: 0.65rem;
+            color: var(--text-muted); margin-bottom: 5px; letter-spacing: 1px;
         }
-
-        .input-wrap { position: relative; margin-bottom: 20px; }
 
         input {
             width: 100%; background: var(--panel); border: 1px solid var(--border);
-            border-radius: 12px; padding: 13px 16px; font-family: var(--mono);
+            border-radius: 12px; padding: 12px 16px; font-family: var(--mono);
             font-size: 0.9rem; color: var(--text); outline: none;
-            transition: all 0.2s;
         }
 
-        input:focus { border-color: var(--accent); box-shadow: var(--glow-sm); }
+        input:focus { border-color: var(--accent); }
 
-        .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-
-        .method-btn {
-            background: var(--panel); border: 1px solid var(--border);
-            border-radius: 12px; padding: 14px 10px; cursor: pointer;
-            text-align: center; transition: all 0.2s;
-        }
-
-        .method-btn.active { border-color: var(--accent); background: rgba(0,212,255,0.06); }
-
-        .encrypt-btn {
+        .btn {
             width: 100%; background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-            border: none; border-radius: 12px; padding: 15px; font-weight: 700;
-            color: white; cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+            border: none; border-radius: 12px; padding: 14px; font-weight: 700;
+            color: white; cursor: pointer; margin-top: 10px;
         }
 
-        .encrypt-btn:hover { box-shadow: 0 0 30px rgba(0,212,255,0.3); opacity: 0.9; }
-
-        .result-box {
-            display: none; margin-top: 20px; background: var(--panel);
-            border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+        .link-text {
+            margin-top: 15px; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;
         }
 
-        .result-header {
-            display: flex; justify-content: space-between; padding: 12px 16px;
-            background: rgba(0,212,255,0.03); border-bottom: 1px solid var(--border);
-        }
+        .link-text span { color: var(--accent); text-decoration: underline; }
 
-        .result-value { font-family: var(--mono); font-size: 0.78rem; padding: 16px; word-break: break-all; color: #a8c8e8; }
+        #mainContent { display: none; width: 100%; max-width: 600px; }
+        #registerSection { display: none; }
+        .error-msg { color: #ef4444; font-size: 0.7rem; margin-top: 5px; display: none; font-family: var(--mono); }
 
-        .legend { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-
-        .legend-item { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
-
-        @media (max-width: 480px) {
-            .method-grid, .legend { grid-template-columns: 1fr; }
-        }
+        /* Asosiy ishchi qism stillari (oldigi kodingizdan) */
+        .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .method-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px; cursor: pointer; text-align: center; font-size: 0.7rem; }
+        .method-btn.active { border-color: var(--accent); background: rgba(0,212,255,0.06); }
+        .result-box { margin-top: 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: none; word-break: break-all; }
     </style>
 </head>
 <body>
 
-<div class="orb2"></div>
-
-<div id="loginOverlay">
-    <div class="card" style="width: 100%; max-width: 350px; text-align: center;">
-        <div class="badge">Xavfsiz Tizim</div>
-        <h2 style="margin-bottom: 20px; font-family: var(--sans);">Kirish</h2>
+    <div id="loginSection" class="card" style="text-align: center;">
+        <div class="badge">Kirish</div>
+        <h2>Xush kelibsiz</h2>
         <div class="input-wrap">
-            <input type="text" id="username" placeholder="Login">
+            <label>LOGIN</label>
+            <input type="text" id="loginUser" placeholder="Loginingizni kiriting">
         </div>
         <div class="input-wrap">
-            <input type="password" id="sysPassword" placeholder="Parol">
+            <label>PAROL</label>
+            <input type="password" id="loginPass" placeholder="••••••••">
         </div>
-        <button class="encrypt-btn" id="loginBtn">KIRISH</button>
-        <p id="loginError" style="color: #ef4444; font-family: var(--mono); font-size: 0.7rem; margin-top: 10px; display: none;">Xato kiritildi!</p>
-    </div>
-</div>
-
-<div class="wrapper" id="mainContent">
-    <div class="header">
-        <div class="badge">Onlayn vosita</div>
-        <h1>Parol Shifrlash</h1>
-        <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">// Mahalliy shifrlash</div>
+        <button class="btn" id="loginBtn">KIRISH</button>
+        <p id="loginError" class="error-msg">Login yoki parol noto'g'ri!</p>
+        <p class="link-text" onclick="toggleAuth('reg')">Hali hisobingiz yo'qmi? <span>Ro'yxatdan o'ting</span></p>
     </div>
 
-    <div class="card">
-        <div class="warning">
-            <span>⚡ Barcha amallar brauzerda bajariladi. Ma'lumotlar serverga yuborilmaydi.</span>
-        </div>
-
-        <label>Matn yoki Parol</label>
+    <div id="registerSection" class="card" style="text-align: center;">
+        <div class="badge">Ro'yxatdan o'tish</div>
+        <h2>Yangi hisob</h2>
         <div class="input-wrap">
-            <input type="text" id="passwordInput" placeholder="Matnni kiriting..." autocomplete="off">
+            <label>YANGI LOGIN</label>
+            <input type="text" id="regUser" placeholder="Kamida 3 ta belgi">
         </div>
-
-        <label>Usulni tanlang</label>
-        <div class="method-grid">
-            <div class="method-btn active" data-method="sha256">
-                <span style="display:block; font-size: 1.2rem;">🔒</span>
-                <b style="font-size: 0.7rem;">SHA-256</b>
-            </div>
-            <div class="method-btn" data-method="base64">
-                <span style="display:block; font-size: 1.2rem;">📦</span>
-                <b style="font-size: 0.7rem;">Base64</b>
-            </div>
-            <div class="method-btn" data-method="aes">
-                <span style="display:block; font-size: 1.2rem;">🛡️</span>
-                <b style="font-size: 0.7rem;">AES-GCM</b>
-            </div>
+        <div class="input-wrap">
+            <label>YANGI PAROL</label>
+            <input type="password" id="regPass" placeholder="Kamida 5 ta belgi">
         </div>
-
-        <div id="aesKeyWrap" style="display: none;">
-            <label>AES Kaliti (min. 6 belgi)</label>
-            <div class="input-wrap">
-                <input type="password" id="aesKeyInput" placeholder="Maxfiy kalit">
-            </div>
-        </div>
-
-        <button class="encrypt-btn" id="encryptBtn">SHIFRLA</button>
-
-        <div class="result-box" id="resultBox">
-            <div class="result-header">
-                <span style="font-size: 0.6rem; color: var(--accent);">▶ NATIJA</span>
-                <span id="resultMethodTag" style="font-size: 0.6rem; background: rgba(16,185,129,0.1); padding: 2px 8px; border-radius: 10px; color: var(--accent3);"></span>
-            </div>
-            <div class="result-value" id="resultText"></div>
-            <div style="padding: 10px 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                <span id="charCount" style="font-size: 0.6rem; color: var(--text-muted);"></span>
-                <button id="copyBtn" style="background: rgba(0,212,255,0.1); border: 1px solid var(--accent); color: var(--accent); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.7rem;">Nusxalash</button>
-            </div>
-        </div>
+        <button class="btn" id="regBtn">RO'YXATDAN O'TISH</button>
+        <p id="regError" class="error-msg">Bu login allaqachon mavjud yoki ma'lumotlar kam!</p>
+        <p class="link-text" onclick="toggleAuth('login')">Akkauntingiz bormi? <span>Kirish</span></p>
     </div>
 
-    <div class="legend">
-        <div class="legend-item"><div style="color: var(--accent); font-size: 0.7rem; font-weight: bold;">SHA-256</div><div style="font-size: 0.6rem; color: var(--text-muted);">Qaytarib bo'lmaydi.</div></div>
-        <div class="legend-item"><div style="color: var(--accent2); font-size: 0.7rem; font-weight: bold;">Base64</div><div style="font-size: 0.6rem; color: var(--text-muted);">Oddiy kodlash.</div></div>
-        <div class="legend-item"><div style="color: var(--accent3); font-size: 0.7rem; font-weight: bold;">AES</div><div style="font-size: 0.6rem; color: var(--text-muted);">Kalitli shifrlash.</div></div>
+    <div id="mainContent">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div class="badge">Tizimga kirildi</div>
+            <h1 id="welcomeTitle">Salom!</h1>
+        </div>
+        
+        <div class="card">
+            <label>Matnni kiriting</label>
+            <input type="text" id="passwordInput" placeholder="Shifrlash uchun matn...">
+            
+            <div class="method-grid">
+                <div class="method-btn active" data-method="sha256">SHA-256</div>
+                <div class="method-btn" data-method="base64">Base64</div>
+                <div class="method-btn" data-method="aes">AES</div>
+            </div>
+
+            <button class="btn" id="encryptBtn">SHIFRLASH</button>
+
+            <div id="resultBox" class="result-box">
+                <div style="font-size: 0.6rem; color: var(--accent); margin-bottom: 5px;">NATIJA:</div>
+                <div id="resultText" style="font-family: var(--mono); font-size: 0.8rem;"></div>
+            </div>
+            
+            <button class="btn" style="background: #334155; margin-top: 20px;" onclick="location.reload()">CHIQISH</button>
+        </div>
     </div>
-</div>
 
 <script>
-(function() {
-    // --- LOGIN SOZLAMALARI ---
-    const ADMIN_USER = "admin";
-    const ADMIN_PASS = "12345";
-
-    const loginOverlay = document.getElementById('loginOverlay');
+    // --- FOYDALANUVCHILARNI BOSHQARISH ---
+    const loginSection = document.getElementById('loginSection');
+    const registerSection = document.getElementById('registerSection');
     const mainContent = document.getElementById('mainContent');
-    const loginBtn = document.getElementById('loginBtn');
-    
-    loginBtn.addEventListener('click', () => {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('sysPassword').value;
 
-        if(u === ADMIN_USER && p === ADMIN_PASS) {
-            loginOverlay.style.opacity = "0";
-            loginOverlay.style.transition = "0.5s";
-            setTimeout(() => {
-                loginOverlay.style.display = "none";
-                mainContent.style.display = "block";
-                mainContent.style.animation = "fadeUp 0.6s ease both";
-            }, 500);
+    function toggleAuth(type) {
+        if(type === 'reg') {
+            loginSection.style.display = 'none';
+            registerSection.style.display = 'block';
         } else {
-            document.getElementById('loginError').style.display = "block";
-            loginBtn.style.animation = "shake 0.3s ease";
-            setTimeout(() => loginBtn.style.animation = "", 300);
+            loginSection.style.display = 'block';
+            registerSection.style.display = 'none';
+        }
+    }
+
+    // Ro'yxatdan o'tish mantiqi
+    document.getElementById('regBtn').addEventListener('click', () => {
+        const user = document.getElementById('regUser').value.trim();
+        const pass = document.getElementById('regPass').value.trim();
+        const error = document.getElementById('regError');
+
+        if(user.length < 3 || pass.length < 5) {
+            error.textContent = "Login kamida 3, parol 5 ta belgi bo'lsin!";
+            error.style.display = 'block';
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem('users') || '{}');
+        
+        if(users[user]) {
+            error.textContent = "Bu login band!";
+            error.style.display = 'block';
+        } else {
+            users[user] = pass;
+            localStorage.setItem('users', JSON.stringify(users));
+            alert("Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi kiring.");
+            toggleAuth('login');
         }
     });
 
-    // --- SHIFRLASH MANTIQI ---
-    const passwordInput = document.getElementById('passwordInput');
-    const aesKeyInput = document.getElementById('aesKeyInput');
-    const aesKeyWrap = document.getElementById('aesKeyWrap');
-    const encryptBtn = document.getElementById('encryptBtn');
-    const resultBox = document.getElementById('resultBox');
-    const resultText = document.getElementById('resultText');
-    const methodBtns = document.querySelectorAll('.method-btn');
+    // Kirish mantiqi
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const user = document.getElementById('loginUser').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        const users = JSON.parse(localStorage.getItem('users') || '{"admin":"12345"}'); // Default admin
+
+        if(users[user] && users[user] === pass) {
+            loginSection.style.display = 'none';
+            mainContent.style.display = 'block';
+            mainContent.style.animation = "fadeUp 0.5s ease";
+            document.getElementById('welcomeTitle').textContent = "Salom, " + user + "!";
+        } else {
+            const err = document.getElementById('loginError');
+            err.style.display = 'block';
+            document.getElementById('loginBtn').style.animation = "shake 0.3s";
+            setTimeout(() => document.getElementById('loginBtn').style.animation = "", 300);
+        }
+    });
+
+    // --- SHIFRLASH (SODDALASHTIRILGAN) ---
     let currentMethod = 'sha256';
+    const methodBtns = document.querySelectorAll('.method-btn');
 
     methodBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             methodBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentMethod = btn.dataset.method;
-            aesKeyWrap.style.display = currentMethod === 'aes' ? 'block' : 'none';
         });
     });
 
-    async function sha256(msg) {
-        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
-        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-    }
-
-    async function encryptAES(text, keyStr) {
-        const enc = new TextEncoder();
-        const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(keyStr), {name: 'PBKDF2'}, false, ['deriveKey']);
-        const salt = crypto.getRandomValues(new Uint8Array(16));
-        const iv = crypto.getRandomValues(new Uint8Array(12));
-        const key = await crypto.subtle.deriveKey(
-            {name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256'},
-            keyMaterial, {name: 'AES-GCM', length: 256}, false, ['encrypt']
-        );
-        const encrypted = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, enc.encode(text));
-        const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
-        combined.set(salt, 0); combined.set(iv, salt.length); combined.set(new Uint8Array(encrypted), salt.length + iv.length);
-        return btoa(String.fromCharCode(...combined));
-    }
-
-    encryptBtn.addEventListener('click', async () => {
-        const val = passwordInput.value.trim();
-        if(!val) return;
+    document.getElementById('encryptBtn').addEventListener('click', async () => {
+        const text = document.getElementById('passwordInput').value;
+        if(!text) return;
         
-        encryptBtn.textContent = "ISHLANMOQDA...";
-        try {
-            let res = "";
-            if(currentMethod === 'sha256') res = await sha256(val);
-            else if(currentMethod === 'base64') res = btoa(unescape(encodeURIComponent(val)));
-            else if(currentMethod === 'aes') res = await encryptAES(val, aesKeyInput.value);
+        let res = "";
+        if(currentMethod === 'sha256') {
+            const msgBuffer = new TextEncoder().encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            res = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        } else if(currentMethod === 'base64') {
+            res = btoa(text);
+        } else {
+            res = "AES rejimi faollashdi (Simulyatsiya)";
+        }
 
-            resultText.textContent = res;
-            document.getElementById('resultMethodTag').textContent = currentMethod.toUpperCase();
-            document.getElementById('charCount').textContent = res.length + " belgi";
-            resultBox.style.display = "block";
-        } catch(e) { alert("Xato!"); }
-        encryptBtn.textContent = "SHIFRLA";
+        document.getElementById('resultText').textContent = res;
+        document.getElementById('resultBox').style.display = 'block';
     });
-
-    document.getElementById('copyBtn').addEventListener('click', () => {
-        navigator.clipboard.writeText(resultText.textContent);
-        const btn = document.getElementById('copyBtn');
-        btn.textContent = "Nusxalandi!";
-        setTimeout(() => btn.textContent = "Nusxalash", 2000);
-    });
-})();
 </script>
 </body>
 </html>
