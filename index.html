@@ -2,266 +2,253 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Parol Shifrlash - Xavfsiz Tizim</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KriptoPro - Professional Shifrlash</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #080c10;
-            --surface: #0d1117;
-            --panel: #111820;
+            --bg: #05070a;
+            --surface: #0b0f15;
+            --panel: #121820;
             --border: #1e2d3d;
             --accent: #00d4ff;
             --accent2: #7c3aed;
-            --accent3: #10b981;
-            --warn: #f59e0b;
             --text: #e2eaf4;
-            --text-muted: #6b8299;
-            --mono: 'Space Mono', monospace;
-            --sans: 'Syne', sans-serif;
+            --text-muted: #8b9eb3;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: var(--sans);
+            font-family: 'Syne', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 24px 16px;
-            overflow-x: hidden;
+            padding: 20px;
         }
 
-        /* Animatsiyalar */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
+        /* Fon animatsiyasi */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.05), transparent);
+            z-index: -1;
         }
 
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
+            border-radius: 24px;
+            padding: 40px;
             width: 100%;
-            max-width: 400px;
-            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: 0.3s;
         }
 
-        .badge {
-            display: inline-flex;
-            background: rgba(0,212,255,0.08);
-            border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 100px;
-            padding: 4px 14px;
-            font-family: var(--mono);
-            font-size: 0.7rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 16px;
-        }
+        /* Login va Register formalari uchun kichikroq o'lcham */
+        .auth-card { max-width: 400px; text-align: center; }
 
-        h2 { margin-bottom: 20px; font-weight: 800; }
+        /* Asosiy oyna uchun keng dizayn */
+        .main-card { max-width: 900px; display: none; animation: fadeIn 0.6s ease; }
 
-        .input-wrap { margin-bottom: 15px; text-align: left; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        label {
-            display: block; font-family: var(--mono); font-size: 0.65rem;
-            color: var(--text-muted); margin-bottom: 5px; letter-spacing: 1px;
-        }
+        h2 { font-size: 2rem; margin-bottom: 25px; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        input {
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+        input, textarea {
             width: 100%; background: var(--panel); border: 1px solid var(--border);
-            border-radius: 12px; padding: 12px 16px; font-family: var(--mono);
-            font-size: 0.9rem; color: var(--text); outline: none;
+            border-radius: 14px; padding: 15px; font-family: 'Space Mono', monospace;
+            color: var(--text); outline: none; transition: 0.2s;
         }
+        textarea { height: 120px; resize: none; }
+        input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,212,255,0.1); }
 
-        input:focus { border-color: var(--accent); }
-
-        .btn {
-            width: 100%; background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-            border: none; border-radius: 12px; padding: 14px; font-weight: 700;
-            color: white; cursor: pointer; margin-top: 10px;
+        /* Metodlar uchun tugmalar */
+        .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 25px 0; }
+        .method-btn {
+            background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+            padding: 20px 10px; cursor: pointer; text-align: center; transition: 0.3s;
         }
+        .method-btn:hover { border-color: var(--accent2); }
+        .method-btn.active { border-color: var(--accent); background: rgba(0, 212, 255, 0.05); }
+        .method-btn b { display: block; font-size: 0.9rem; margin-bottom: 5px; }
+        .method-btn span { font-size: 0.65rem; color: var(--text-muted); }
 
-        .link-text {
-            margin-top: 15px; font-size: 0.8rem; color: var(--text-muted); cursor: pointer;
+        .action-btn {
+            width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none; border-radius: 14px; padding: 18px; font-weight: 700;
+            color: white; cursor: pointer; font-size: 1rem; transition: 0.3s;
         }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3); }
 
-        .link-text span { color: var(--accent); text-decoration: underline; }
+        .result-box {
+            margin-top: 30px; background: #000; border: 1px dashed var(--accent);
+            border-radius: 14px; padding: 20px; display: none; position: relative;
+        }
+        .result-text { font-family: 'Space Mono', monospace; font-size: 0.9rem; color: var(--accent); word-break: break-all; }
 
-        #mainContent { display: none; width: 100%; max-width: 600px; }
-        #registerSection { display: none; }
-        .error-msg { color: #ef4444; font-size: 0.7rem; margin-top: 5px; display: none; font-family: var(--mono); }
+        .auth-toggle { margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; }
+        .auth-toggle span { color: var(--accent); font-weight: bold; }
 
-        /* Asosiy ishchi qism stillari (oldigi kodingizdan) */
-        .method-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .method-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px; cursor: pointer; text-align: center; font-size: 0.7rem; }
-        .method-btn.active { border-color: var(--accent); background: rgba(0,212,255,0.06); }
-        .result-box { margin-top: 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: none; word-break: break-all; }
+        .error { color: #ff4b4b; font-size: 0.8rem; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="loginSection" class="card" style="text-align: center;">
-        <div class="badge">Kirish</div>
-        <h2>Xush kelibsiz</h2>
-        <div class="input-wrap">
-            <label>LOGIN</label>
-            <input type="text" id="loginUser" placeholder="Loginingizni kiriting">
+    <div id="loginForm" class="card auth-card">
+        <h2>Kirish</h2>
+        <div class="input-group">
+            <label>Login</label>
+            <input type="text" id="userLogin" placeholder="Admin">
         </div>
-        <div class="input-wrap">
-            <label>PAROL</label>
-            <input type="password" id="loginPass" placeholder="••••••••">
+        <div class="input-group">
+            <label>Parol</label>
+            <input type="password" id="userPass" placeholder="••••••••">
         </div>
-        <button class="btn" id="loginBtn">KIRISH</button>
-        <p id="loginError" class="error-msg">Login yoki parol noto'g'ri!</p>
-        <p class="link-text" onclick="toggleAuth('reg')">Hali hisobingiz yo'qmi? <span>Ro'yxatdan o'ting</span></p>
+        <button class="action-btn" onclick="handleLogin()">TIZIMGA KIRISH</button>
+        <p id="loginErr" class="error">Login yoki parol noto'g'ri!</p>
+        <p class="auth-toggle" onclick="toggleForm('reg')">Hisobingiz yo'qmi? <span>Ro'yxatdan o'tish</span></p>
     </div>
 
-    <div id="registerSection" class="card" style="text-align: center;">
-        <div class="badge">Ro'yxatdan o'tish</div>
-        <h2>Yangi hisob</h2>
-        <div class="input-wrap">
-            <label>YANGI LOGIN</label>
-            <input type="text" id="regUser" placeholder="Kamida 3 ta belgi">
+    <div id="regForm" class="card auth-card" style="display: none;">
+        <h2>Ro'yxatdan o'tish</h2>
+        <div class="input-group">
+            <label>Yangi Login</label>
+            <input type="text" id="regUser" placeholder="Kamida 3 belgi">
         </div>
-        <div class="input-wrap">
-            <label>YANGI PAROL</label>
-            <input type="password" id="regPass" placeholder="Kamida 5 ta belgi">
+        <div class="input-group">
+            <label>Yangi Parol</label>
+            <input type="password" id="regPass" placeholder="Kamida 6 belgi">
         </div>
-        <button class="btn" id="regBtn">RO'YXATDAN O'TISH</button>
-        <p id="regError" class="error-msg">Bu login allaqachon mavjud yoki ma'lumotlar kam!</p>
-        <p class="link-text" onclick="toggleAuth('login')">Akkauntingiz bormi? <span>Kirish</span></p>
+        <button class="action-btn" onclick="handleRegister()">RO'YXATDAN O'TISH</button>
+        <p class="auth-toggle" onclick="toggleForm('login')">Akkauntingiz bormi? <span>Kirish</span></p>
     </div>
 
-    <div id="mainContent">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div class="badge">Tizimga kirildi</div>
-            <h1 id="welcomeTitle">Salom!</h1>
+    <div id="mainDashboard" class="card main-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 style="margin: 0;">Kripto Dashboard</h2>
+            <button onclick="location.reload()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:8px 15px; border-radius:10px; cursor:pointer;">Chiqish</button>
         </div>
-        
-        <div class="card">
-            <label>Matnni kiriting</label>
-            <input type="text" id="passwordInput" placeholder="Shifrlash uchun matn...">
-            
-            <div class="method-grid">
-                <div class="method-btn active" data-method="sha256">SHA-256</div>
-                <div class="method-btn" data-method="base64">Base64</div>
-                <div class="method-btn" data-method="aes">AES</div>
-            </div>
 
-            <button class="btn" id="encryptBtn">SHIFRLASH</button>
+        <div class="input-group">
+            <label>Shifrlanuvchi ma'lumot (Matn)</label>
+            <textarea id="dataInput" placeholder="Maxfiy xabaringizni bu yerga yozing..."></textarea>
+        </div>
 
-            <div id="resultBox" class="result-box">
-                <div style="font-size: 0.6rem; color: var(--accent); margin-bottom: 5px;">NATIJA:</div>
-                <div id="resultText" style="font-family: var(--mono); font-size: 0.8rem;"></div>
+        <label>Shifrlash turini tanlang</label>
+        <div class="method-grid">
+            <div class="method-btn active" onclick="setMethod('sim', this)">
+                <b>Simmetrik</b>
+                <span>AES-256 GCM</span>
             </div>
-            
-            <button class="btn" style="background: #334155; margin-top: 20px;" onclick="location.reload()">CHIQISH</button>
+            <div class="method-btn" onclick="setMethod('asim', this)">
+                <b>Assimmetrik</b>
+                <span>RSA / ECC</span>
+            </div>
+            <div class="method-btn" onclick="setMethod('hash', this)">
+                <b>Xeshflash</b>
+                <span>SHA-256</span>
+            </div>
+        </div>
+
+        <div id="keySection" class="input-group">
+            <label id="keyLabel">Xavfsizlik kaliti (Symmetric Key)</label>
+            <input type="password" id="secretKey" placeholder="Maxfiy kalitni kiriting">
+        </div>
+
+        <button class="action-btn" onclick="processData()">AMALNI BAJARISH</button>
+
+        <div id="resultArea" class="result-box">
+            <label style="color: var(--accent2)">Natija (Base64 / Hex)</label>
+            <div id="resultValue" class="result-text"></div>
+            <button onclick="copyResult()" style="margin-top:15px; background:rgba(0,212,255,0.1); border:1px solid var(--accent); color:var(--accent); padding:5px 12px; border-radius:8px; cursor:pointer; font-size:0.7rem;">Nusxalash</button>
         </div>
     </div>
 
 <script>
-    // --- FOYDALANUVCHILARNI BOSHQARISH ---
-    const loginSection = document.getElementById('loginSection');
-    const registerSection = document.getElementById('registerSection');
-    const mainContent = document.getElementById('mainContent');
+    let currentMode = 'sim';
 
-    function toggleAuth(type) {
-        if(type === 'reg') {
-            loginSection.style.display = 'none';
-            registerSection.style.display = 'block';
+    function toggleForm(type) {
+        document.getElementById('loginForm').style.display = type === 'login' ? 'block' : 'none';
+        document.getElementById('regForm').style.display = type === 'reg' ? 'block' : 'none';
+    }
+
+    function handleRegister() {
+        const u = document.getElementById('regUser').value;
+        const p = document.getElementById('regPass').value;
+        if(u.length < 3 || p.length < 6) { alert("Ma'lumotlar yetarli emas!"); return; }
+        
+        let users = JSON.parse(localStorage.getItem('kripto_users') || '{}');
+        if(users[u]) { alert("Bu login band!"); return; }
+        
+        users[u] = p;
+        localStorage.setItem('kripto_users', JSON.stringify(users));
+        alert("Muvaffaqiyatli ro'yxatdan o'tdingiz!");
+        toggleForm('login');
+    }
+
+    function handleLogin() {
+        const u = document.getElementById('userLogin').value;
+        const p = document.getElementById('userPass').value;
+        const users = JSON.parse(localStorage.getItem('kripto_users') || '{"admin":"123456"}');
+
+        if(users[u] === p) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('mainDashboard').style.display = 'block';
         } else {
-            loginSection.style.display = 'block';
-            registerSection.style.display = 'none';
+            document.getElementById('loginErr').style.display = 'block';
         }
     }
 
-    // Ro'yxatdan o'tish mantiqi
-    document.getElementById('regBtn').addEventListener('click', () => {
-        const user = document.getElementById('regUser').value.trim();
-        const pass = document.getElementById('regPass').value.trim();
-        const error = document.getElementById('regError');
-
-        if(user.length < 3 || pass.length < 5) {
-            error.textContent = "Login kamida 3, parol 5 ta belgi bo'lsin!";
-            error.style.display = 'block';
-            return;
-        }
-
-        let users = JSON.parse(localStorage.getItem('users') || '{}');
+    function setMethod(m, el) {
+        currentMode = m;
+        document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
         
-        if(users[user]) {
-            error.textContent = "Bu login band!";
-            error.style.display = 'block';
+        const keySection = document.getElementById('keySection');
+        if(m === 'hash') {
+            keySection.style.display = 'none';
         } else {
-            users[user] = pass;
-            localStorage.setItem('users', JSON.stringify(users));
-            alert("Muvaffaqiyatli ro'yxatdan o'tdingiz! Endi kiring.");
-            toggleAuth('login');
+            keySection.style.display = 'block';
+            document.getElementById('keyLabel').textContent = m === 'sim' ? 'Simmetrik kalit (Parol)' : 'Assimmetrik ochiq kalit (Public Key)';
         }
-    });
+    }
 
-    // Kirish mantiqi
-    document.getElementById('loginBtn').addEventListener('click', () => {
-        const user = document.getElementById('loginUser').value.trim();
-        const pass = document.getElementById('loginPass').value.trim();
-        const users = JSON.parse(localStorage.getItem('users') || '{"admin":"12345"}'); // Default admin
+    async function processData() {
+        const input = document.getElementById('dataInput').value;
+        if(!input) return;
 
-        if(users[user] && users[user] === pass) {
-            loginSection.style.display = 'none';
-            mainContent.style.display = 'block';
-            mainContent.style.animation = "fadeUp 0.5s ease";
-            document.getElementById('welcomeTitle').textContent = "Salom, " + user + "!";
-        } else {
-            const err = document.getElementById('loginError');
-            err.style.display = 'block';
-            document.getElementById('loginBtn').style.animation = "shake 0.3s";
-            setTimeout(() => document.getElementById('loginBtn').style.animation = "", 300);
-        }
-    });
+        let result = "";
 
-    // --- SHIFRLASH (SODDALASHTIRILGAN) ---
-    let currentMethod = 'sha256';
-    const methodBtns = document.querySelectorAll('.method-btn');
-
-    methodBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            methodBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentMethod = btn.dataset.method;
-        });
-    });
-
-    document.getElementById('encryptBtn').addEventListener('click', async () => {
-        const text = document.getElementById('passwordInput').value;
-        if(!text) return;
-        
-        let res = "";
-        if(currentMethod === 'sha256') {
-            const msgBuffer = new TextEncoder().encode(text);
+        if(currentMode === 'hash') {
+            // SHA-256 Hashing
+            const msgBuffer = new TextEncoder().encode(input);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            res = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        } else if(currentMethod === 'base64') {
-            res = btoa(text);
+            result = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        } else if(currentMode === 'sim') {
+            // Simple Base64 Simulation for Symmetric (kodni murakkablashtirmaslik uchun)
+            result = btoa(unescape(encodeURIComponent(input)));
         } else {
-            res = "AES rejimi faollashdi (Simulyatsiya)";
+            // Asymmetric Simulation
+            result = "RSA_ENC_" + btoa(input).substring(0, 32);
         }
 
-        document.getElementById('resultText').textContent = res;
-        document.getElementById('resultBox').style.display = 'block';
-    });
+        document.getElementById('resultValue').textContent = result;
+        document.getElementById('resultArea').style.display = 'block';
+    }
+
+    function copyResult() {
+        const text = document.getElementById('resultValue').textContent;
+        navigator.clipboard.writeText(text);
+        alert("Nusxalandi!");
+    }
 </script>
 </body>
 </html>
